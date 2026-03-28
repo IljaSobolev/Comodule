@@ -1,7 +1,7 @@
 open import Categories.Category using (Category)
 open import Categories.Monad using (Monad)
 
-module Comodule {o ℓ e} {𝒞 : Category o ℓ e} (M : Monad 𝒞) (𝒟 : Category o ℓ e) where
+module Module {o ℓ e} {𝒞 : Category o ℓ e} (M : Monad 𝒞) (𝒟 : Category o ℓ e) where
 
 open import Level using (_⊔_)
 
@@ -13,34 +13,34 @@ open Monad M using () renaming (F to T; η to Tη; μ to Tμ)
 open T using () renaming (F₀ to T₀)
 open Category 𝒟 hiding (_⇒_)
 
-record IsComodule (F : Contravariant 𝒞 𝒟) (c : NaturalTransformation F (F ∘F T.op)) : Set (o ⊔ e) where
-  open NaturalTransformation c renaming (η to ηc)
+record IsModule (F : Functor 𝒞 𝒟) (c : NaturalTransformation (F ∘F T) F) : Set (o ⊔ e) where
+  open NaturalTransformation c renaming (η to cη)
   open Functor F using (F₁)
   field
-    assoc : ∀ {X} → F₁ (Tμ.η X) ∘ ηc X ≈ ηc (T₀ X) ∘ ηc X
-    identity : ∀ {X} → F₁ (Tη.η X) ∘ ηc X ≈ id
+    assoc : ∀ {X} → cη X ∘ cη (T₀ X) ≈ cη X ∘ F₁ (Tμ.η X)
+    identity : ∀ {X} → cη X ∘ F₁ (Tη.η X) ≈ id
 
-record Comodule : Set (o ⊔ ℓ ⊔ e) where
+record Module : Set (o ⊔ ℓ ⊔ e) where
   field
-    F          : Contravariant 𝒞 𝒟
-    c          : NaturalTransformation F (F ∘F T.op)
-    isComodule : IsComodule F c
+    F        : Functor 𝒞 𝒟
+    c        : NaturalTransformation (F ∘F T) F
+    isModule : IsModule F c
 
-record _⇒_ (X Y : Comodule) : Set (o ⊔ ℓ ⊔ e) where
-  module X = Comodule X
-  module Y = Comodule Y
+record _⇒_ (X Y : Module) : Set (o ⊔ ℓ ⊔ e) where
+  module X = Module X
+  module Y = Module Y
   open NaturalTransformation using (η)
   field
     θ    : NaturalTransformation X.F Y.F
-    comm : ∀ {X} → η Y.c X ∘ η θ X ≈ η θ (T₀ X) ∘ η X.c X
+    comm : ∀ {X} → η θ X ∘ η X.c X ≈ η Y.c X ∘ η θ (T₀ X)
 
-CoMod : Category _ _ _
-CoMod = record
-  { Obj = Comodule
+Mod : Category (o ⊔ ℓ ⊔ e) _ _
+Mod = record
+  { Obj = Module
   ; _⇒_ = _⇒_
   ; _≈_ = λ x y → ∀ {X} → η (θ x) X ≈ η (θ y) X
-  ; id = record { θ = ntid ; comm = identityʳ ○ ⟺ identityˡ }
-  ; _∘_ = λ x y → record { θ = θ x ∘ᵥ θ y ; comm = sym-assoc ○ comm x ⟩∘⟨refl ○ assoc ○ refl⟩∘⟨ comm y ○ sym-assoc}
+  ; id = record { θ = ntid ; comm = identityˡ ○ ⟺ identityʳ }
+  ; _∘_ = λ x y → record { θ = θ x ∘ᵥ θ y ; comm = assoc ○ refl⟩∘⟨ comm y ○ sym-assoc ○ comm x ⟩∘⟨refl ○ assoc}
   ; assoc = assoc
   ; sym-assoc = sym-assoc
   ; identityˡ = identityˡ

@@ -15,11 +15,13 @@ open import Categories.Category.Cartesian using (Cartesian)
 open import Categories.Category.BinaryProducts using (BinaryProducts)
 open import Categories.Object.Terminal using (Terminal)
 
-open import Cont ext-≡
+open import Cont
+open import ContainerMorphismEquality ext-≡
 
 
 -- BINARY PRODUCTS
 
+infix 7 _×ᶜ_
 _×ᶜ_ : Container → Container → Container
 (S ⊲ P) ×ᶜ (S' ⊲ P') = (S × S') ⊲ λ {(s , s') → P s ⊎ P' s'}
 

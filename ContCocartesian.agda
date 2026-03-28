@@ -13,11 +13,13 @@ open import Function using (id)
 open import Categories.Category.Cocartesian using (Cocartesian; BinaryCoproducts)
 open import Categories.Object.Initial using (Initial)
 
-open import Cont ext-≡
+open import Cont
+open import ContainerMorphismEquality ext-≡
 
 
 -- BINARY COPRODUCTS
 
+infix 6 _+ᶜ_
 _+ᶜ_ : Container → Container → Container
 (S ⊲ P) +ᶜ (S' ⊲ P') = (S ⊎ S') ⊲ [ P , P' ]
 
