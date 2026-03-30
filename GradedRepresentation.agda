@@ -85,3 +85,23 @@ comm {v = v} {v' = v'} f g =
   where
   open Category (Sets _) using (module HomReasoning)
   open HomReasoning
+
+module U = Category U
+
+
+coercion : (f : D ⇒ ₀ (T₀ v) C)
+           (F : ⟪ C ⟫₀ → ⟪ D ⟫₀) →
+           (m : v U.⇒ v') →
+           represents v f F →
+           represents v' (η (T₁ m) C ∘C f) F
+coercion {v = v} {v' = v'} f F m rF =
+  begin
+    ⟪ f ⟫₁ ∘ ⟪ η (T₁ m) _ ⟫₁ ∘ η (c v') _
+  ≈⟨ refl⟩∘⟨_ {f = ⟪ f ⟫₁} (coerce m) ⟩
+    ⟪ f ⟫₁ ∘ η (c v) _
+  ≈⟨ rF ⟩
+    F
+  ∎
+  where
+  open Category (Sets _) using (module HomReasoning)
+  open HomReasoning
