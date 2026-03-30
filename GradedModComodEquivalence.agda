@@ -109,8 +109,8 @@ id→MC∘CM 𝒟 = ntHelper (record
   open Category 𝒟
   open HomReasoning using (⟺; _○_)
 
-mod≅comod : (𝒟 : Category o ℓ e) → StrongEquivalence (GCoMod M 𝒟) (op (GMod M (op 𝒟)))
-mod≅comod 𝒟 = record
+gmod≅gcomod : (𝒟 : Category o ℓ e) → StrongEquivalence (GCoMod M 𝒟) (op (GMod M (op 𝒟)))
+gmod≅gcomod 𝒟 = record
   { F = CM 𝒟
   ; G = MC 𝒟
   ; weak-inverse = record
