@@ -16,25 +16,21 @@ comod→mod : (𝒟 : Category o ℓ e) → Comodule M 𝒟 → Module M (op �
 comod→mod 𝒟 com = record
   { F = Functor.op F
   ; c = NaturalTransformation.op c
-  ; isModule = record { assoc = ⟺ assoc; identity = identity }
+  ; isModule = record { assoc = assoc; identity = identity }
   }
   where
   open Comodule.Comodule com using (F; c; isComodule)
   open IsComodule isComodule using (assoc; identity)
-  open Category 𝒟 using (module HomReasoning)
-  open HomReasoning using (⟺)
 
-mod→comod : (𝒟 : Category o ℓ e) → Module M (Category.op 𝒟) → Comodule M 𝒟
+mod→comod : (𝒟 : Category o ℓ e) → Module M (op 𝒟) → Comodule M 𝒟
 mod→comod 𝒟 mod = record
   { F = Functor.op F
   ; c = NaturalTransformation.op c
-  ; isComodule = record { assoc = ⟺ assoc; identity = identity }
+  ; isComodule = record { assoc = assoc; identity = identity }
   }
   where
   open Module.Module mod using (F; c; isModule)
   open IsModule isModule using (assoc; identity)
-  open Category 𝒟 using (module HomReasoning)
-  open HomReasoning using (⟺)
 
 open import Relation.Binary.Structures using (module IsEquivalence)
 

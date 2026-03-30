@@ -17,7 +17,7 @@ record IsModule (F : Functor 𝒞 𝒟) (c : NaturalTransformation (F ∘F T) F)
   open NaturalTransformation c renaming (η to cη)
   open Functor F using (F₁)
   field
-    assoc : ∀ {X} → cη X ∘ cη (T₀ X) ≈ cη X ∘ F₁ (Tμ.η X)
+    assoc : ∀ {X} → cη X ∘ F₁ (Tμ.η X) ≈ cη X ∘ cη (T₀ X)
     identity : ∀ {X} → cη X ∘ F₁ (Tη.η X) ≈ id
 
 record Module : Set (o ⊔ ℓ ⊔ e) where
