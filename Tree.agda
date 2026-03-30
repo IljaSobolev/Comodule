@@ -7,7 +7,8 @@ module Tree
   (ext-≡ : ∀ {a b} → Extensionality a b)
   where
 
-open import Cont ext-≡
+open import Cont
+open import ContainerMorphismEquality ext-≡
 
 open Container
 open _⇒_
@@ -80,8 +81,8 @@ pos-id : (t : Tree (Shp C) (Pos C)) → ∀ p → pos† {t = t} (η C) p ≅ p
 pos-id leaf stop = refl
 pos-id (node _ t) (step _ _) = cong₂ step (sym (ext-≅ (shp-id ∘ t))) (pos-id _ _)
 
-η†≡id : η C † ≡ idᶜ
-η†≡id = shp-id ⊲-≡' trans (pos-id _ _)
+η†≡id : η C † ≡ idC
+η†≡id = shp-id ⊲-≡' λ _ → trans (pos-id _ _)
 
 
 -- RIGHT UNIT
@@ -94,8 +95,8 @@ pfst-id : (t : Tree S P) → ∀ p → pfst {t = t} {f = λ _ → leaf} p ≅ p
 pfst-id leaf stop = refl
 pfst-id (node s t) (step _ p) = cong₂ step (sym (ext-≅ (graft-id ∘ t))) (pfst-id (t _) p)
 
-f†∘η≡f : (f : C ⇒ 𝒯 D) → f † ∘ᶜ η C ≡ f
-f†∘η≡f f = (graft-id ∘ _) ⊲-≡' (cong _ ∘ trans (pfst-id _ _))
+f†∘η≡f : (f : C ⇒ 𝒯 D) → f † ∘C η C ≡ f
+f†∘η≡f f = (graft-id ∘ _) ⊲-≡' λ _ → cong _ ∘ trans (pfst-id _ _)
 
 
 -- ASSOCIATIVITY
@@ -127,7 +128,7 @@ graft-shp†-comm f (node s t) v =
 shp†-assoc : (f : C ⇒ 𝒯 D) (g : D ⇒ 𝒯 E) →
              ∀ t →
              ------------------
-             shp† (g † ∘ᶜ f) t
+             shp† (g † ∘C f) t
              ≅
              shp† g (shp† f t)
 
@@ -139,5 +140,5 @@ shp†-assoc f g (node s t) = sym (
     (cong (graft (shp† _ (sf f s))) (ext-≅ (λ _ → sym (shp†-assoc _ _ (t _)))))
   )
 
-[g†∘f]†≡g†∘f† : (f : C ⇒ 𝒯 D) (g : D ⇒ 𝒯 E) → (g † ∘ᶜ f) † ≡ g † ∘ᶜ f †
+[g†∘f]†≡g†∘f† : (f : C ⇒ 𝒯 D) (g : D ⇒ 𝒯 E) → (g † ∘C f) † ≡ g † ∘C f †
 [g†∘f]†≡g†∘f† f g = shp†-assoc _ _ ⊲-≡' {!   !}
