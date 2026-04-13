@@ -1,7 +1,7 @@
 open import Categories.Category using (Category)
 open import Categories.Monad using (Monad)
 
-module Equiv {o ℓ e} {𝒞 : Category o ℓ e} (M : Monad 𝒞) where
+module ModComodEquivalence {o ℓ e} {𝒞 : Category o ℓ e} (M : Monad 𝒞) where
 
 open import Categories.Category.Equivalence using (StrongEquivalence)
 open import Categories.Functor using (Functor; _∘F_) renaming (id to idF)
