@@ -45,6 +45,9 @@ ext-≅' refl f≗g = ext-≅ (λ _ → f≗g refl)
 ≅-to-≡ : {S : Set} {x y : S} → x ≅ y → x ≡ y
 ≅-to-≡ refl = _≡_.refl
 
+≡-to-≅ : {S : Set} {x y : S} → x ≡ y → x ≅ y
+≡-to-≅ _≡_.refl = refl
+
 
 -- CHARACTERISATION OF EQUALITY BETWEEN TWO MORPHISMS
 
