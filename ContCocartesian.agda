@@ -6,6 +6,7 @@ module ContCocartesian
 
 open import Data.Empty using (⊥)
 open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_])
+open import Data.Product using (_×_; _,_)
 open import Relation.Binary.PropositionalEquality using (_≡_)
 open import Relation.Binary.HeterogeneousEquality using (refl)
 open import Function using (id)
@@ -66,3 +67,20 @@ cont-cocartesian = record
   { initial = cont-initial
   ; coproducts = cont-binary-coproducts
   }
+
+
+-- COINTERPRETATION MAPS COPRODUCTS TO PRODUCTS
+
+⟪⟫-proj₁ : ⟪ D +ᶜ E ⟫₀ → ⟪ D ⟫₀
+⟪⟫-proj₁ c x = c (inj₁ x)
+
+⟪⟫-proj₂ : ⟪ D +ᶜ E ⟫₀ → ⟪ E ⟫₀
+⟪⟫-proj₂ c x = c (inj₂ x)
+
+⟪⟫-pair : (⟪ C ⟫₀ → ⟪ D ⟫₀) → (⟪ C ⟫₀ → ⟪ E ⟫₀) → ⟪ C ⟫₀ → ⟪ D +ᶜ E ⟫₀
+⟪⟫-pair f g c (inj₁ x) = f c x
+⟪⟫-pair f g c (inj₂ y) = g c y
+
+⟪⟫-× : ⟪ D ⟫₀ × ⟪ E ⟫₀ → ⟪ D +ᶜ E ⟫₀
+⟪⟫-× (f , g) (inj₁ x) = f x
+⟪⟫-× (f , g) (inj₂ x) = g x

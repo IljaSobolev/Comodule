@@ -1,28 +1,38 @@
-open import Categories.Monad.Graded using (GradedMonad)
-open import Categories.NaturalTransformation using (NaturalTransformation)
-open import Categories.Functor using (Functor; _∘F_)
-open import Categories.Functor.Monoidal using (IsMonoidalFunctor; MonoidalFunctor)
-open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Category.Monoidal using (MonoidalCategory; Monoidal)
 
-open import GradedComodule using (IsGradedComodule)
+open import Axiom.Extensionality.Propositional using (Extensionality)
+
 open import Cont
+open import GradedComodule using (IsGradedComodule)
 
 module GradedRepresentation
-  {o ℓ e}
-  {V : MonoidalCategory o ℓ e}
-  (M : GradedMonad V Cont)
-  (c : ∀ v → NaturalTransformation ⟪⟫ (⟪⟫ ∘F (Functor.op (Functor.₀ (MonoidalFunctor.F M) v))))
-  (isGradedComodule : IsGradedComodule M _ ⟪⟫ c)
+  (ext-≡ : ∀ {a b} → Extensionality a b)
+  {o ℓ e} {V : MonoidalCategory o ℓ e}
+  M c (isGradedComodule : IsGradedComodule {V = V} M _ ⟪⟫ c)
   where
 
-open import Data.Product using (_,_)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong; _≗_)
+open import ContCocartesian ext-≡ using (_+ᶜ_; !ᶜ; cont-cocartesian;  ⟪⟫-proj₁; ⟪⟫-proj₂; ⟪⟫-pair; ⟪⟫-×)
+open import ContCartesian ext-≡ using (⟨_,_⟩ᶜ)
+
+open import Data.Sum using (inj₁; inj₂)
+open import Data.Product using (_×_; _,_)
+open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong; cong₂; _≗_)
 open import Function using (_∘_; id)
+open import Level using (0ℓ)
 
 open import Categories.Category using (Category)
+open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Functor.Properties using (Contravariant)
+open import Categories.Functor using (Functor)
+open import Categories.Functor.Monoidal using (IsMonoidalFunctor; MonoidalFunctor)
+open import Categories.NaturalTransformation using (NaturalTransformation)
 open import Categories.Category.Construction.Kleisli using (Kleisli)
+open import Categories.Category.Cocartesian using (Cocartesian)
+open import Categories.Category.Cocartesian using (BinaryCoproducts)
+open import Categories.Object.Coproduct using (Coproduct)
+
+open Cocartesian cont-cocartesian using (coproducts)
+open BinaryCoproducts coproducts using (coproduct)
 
 open MonoidalFunctor M using (isMonoidal) renaming (F to T)
 open Functor T using () renaming (F₀ to T₀; F₁ to T₁)
@@ -34,6 +44,10 @@ open Monoidal monoidal using (⊗; unit; _⊗₀_)
 open IsGradedComodule isGradedComodule
 open NaturalTransformation
 open Functor
+open Coproduct using (i₁; i₂; [_,_])
+
+open Category (Sets 0ℓ) using (module HomReasoning)
+open HomReasoning
 
 variable
   v v' : Category.Obj U
@@ -65,9 +79,6 @@ comm {v = v} {v' = v'} f g =
   ≈⟨ refl⟩∘⟨_ {f = ⟪ g ⟫₁} (sym-commute (c v') f ∘ η (c v) _) ⟩
     ⟪ g ⟫₁ ∘ η (c v') _ ∘ ⟪ f ⟫₁ ∘ η (c v) _
   ∎
-  where
-  open Category (Sets _) using (module HomReasoning)
-  open HomReasoning
 
 ∘-representable : (f : D ⇒ ₀ (T₀ v) C) (g : E ⇒ ₀ (T₀ v') D)
                   (F : ⟪ C ⟫₀ → ⟪ D ⟫₀) (G : ⟪ D ⟫₀ → ⟪ E ⟫₀) →
@@ -82,16 +93,10 @@ comm {v = v} {v' = v'} f g =
   ≈⟨ rG ⟩∘⟨ rF ⟩
     G ∘ F
   ∎
-  where
-  open Category (Sets _) using (module HomReasoning)
-  open HomReasoning
-
-module U = Category U
-
 
 coercion : (f : D ⇒ ₀ (T₀ v) C)
            (F : ⟪ C ⟫₀ → ⟪ D ⟫₀) →
-           (m : v U.⇒ v') →
+           ∀ m →
            represents v f F →
            represents v' (η (T₁ m) C ∘C f) F
 coercion {v = v} {v' = v'} f F m rF =
@@ -102,6 +107,30 @@ coercion {v = v} {v' = v'} f F m rF =
   ≈⟨ rF ⟩
     F
   ∎
-  where
-  open Category (Sets _) using (module HomReasoning)
-  open HomReasoning
+
+
+-- GRADED REPRESENTABLE FUNCTIONALS HAVE FINITE PRODUCTS
+
+proj₁-representable : represents {C = C +ᶜ D} unit (η ε _ ∘C i₁ coproduct) ⟪⟫-proj₁
+proj₁-representable = refl⟩∘⟨ identity isGradedComodule
+
+proj₂-representable : represents {C = C +ᶜ D} unit (η ε _ ∘C i₂ coproduct) ⟪⟫-proj₂
+proj₂-representable = refl⟩∘⟨ identity isGradedComodule
+
+pair-representable : (f : D ⇒ ₀ (T₀ v) C) (g : E ⇒ ₀ (T₀ v) C)
+                     (F : ⟪ C ⟫₀ → ⟪ D ⟫₀) (G : ⟪ C ⟫₀ → ⟪ E ⟫₀) →
+                     represents v f F → represents v g G →
+                     represents v ([_,_] coproduct f g) (⟪⟫-pair F G)
+pair-representable {v = v} f g F G rF rG =
+  begin
+    ⟪ [_,_] coproduct f g ⟫₁ ∘ η (c v) _
+  ≈⟨ (λ _ → ext-≡ (λ {(inj₁ _) → refl; (inj₂ _) → refl})) ⟩
+    ⟪⟫-× ∘ (λ u → ⟪ f ⟫₁ u , ⟪ g ⟫₁ u) ∘ η (c v) _
+  ≈⟨ refl⟩∘⟨_ {f = ⟪⟫-×} (λ x → cong₂ _,_ (rF x) (rG x)) ⟩
+    ⟪⟫-× ∘ (λ u → F u , G u)
+  ≈⟨ (λ _ → ext-≡ (λ {(inj₁ _) → refl; (inj₂ _) → refl})) ⟩
+    ⟪⟫-pair F G
+  ∎
+
+terminal-representable : represents {C = C} unit !ᶜ (λ _ ())
+terminal-representable x = ext-≡ (λ ())

@@ -1,18 +1,14 @@
-open import Categories.Monad using (Monad)
-open import Categories.NaturalTransformation using (NaturalTransformation)
-open import Categories.Functor using (Functor; _∘F_)
-open import Categories.Category.Instance.Sets using (Sets)
 open import Axiom.Extensionality.Propositional using (Extensionality)
 
-open import Comodule using (IsComodule)
 open import Cont
 
+open import Comodule using (IsComodule)
 module Representation
   (ext-≡ : ∀ {a b} → Extensionality a b)
   M c (isComodule : IsComodule M _ ⟪⟫ c)
   where
 
-open import ContCocartesian ext-≡ using (_+ᶜ_; !ᶜ; cont-cocartesian)
+open import ContCocartesian ext-≡ using (_+ᶜ_; !ᶜ; cont-cocartesian; ⟪⟫-proj₁; ⟪⟫-proj₂; ⟪⟫-pair; ⟪⟫-×)
 open import ContCartesian ext-≡ using (⟨_,_⟩ᶜ)
 
 open import Data.Sum using (inj₁; inj₂)
@@ -21,6 +17,9 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans
 open import Function using (_∘_; id)
 open import Level using (0ℓ)
 
+open import Categories.Monad using (Monad)
+open import Categories.NaturalTransformation using (NaturalTransformation)
+open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Category using (Category)
 open import Categories.Functor.Properties using (Contravariant)
 open import Categories.Category.Construction.Kleisli using (Kleisli)
@@ -95,24 +94,16 @@ comm f g =
 
 -- ℱ PRESERVES FINITE PRODUCTS
 
-proj₁-representable : represents {C = C +ᶜ D} (Tη.η _ ∘C i₁ coproduct) (_∘ inj₁)
+proj₁-representable : represents {C = C +ᶜ D} (Tη.η _ ∘C i₁ coproduct) ⟪⟫-proj₁
 proj₁-representable = refl⟩∘⟨ identity isComodule
 
-proj₂-representable : represents {C = C +ᶜ D} (Tη.η _ ∘C i₂ coproduct) (_∘ inj₂)
+proj₂-representable : represents {C = C +ᶜ D} (Tη.η _ ∘C i₂ coproduct) ⟪⟫-proj₂
 proj₂-representable = refl⟩∘⟨ identity isComodule
-
-pair : (⟪ C ⟫₀ → ⟪ D ⟫₀) → (⟪ C ⟫₀ → ⟪ E ⟫₀) → ⟪ C ⟫₀ → ⟪ D +ᶜ E ⟫₀
-pair f g c (inj₁ x) = f c x
-pair f g c (inj₂ y) = g c y
-
-⟪⟫-× : ⟪ D ⟫₀ × ⟪ E ⟫₀ → ⟪ D +ᶜ E ⟫₀
-⟪⟫-× (f , g) (inj₁ x) = f x
-⟪⟫-× (f , g) (inj₂ x) = g x
 
 pair-representable : (f : D ⇒ T₀ C) (g : E ⇒ T₀ C)
                      (F : ⟪ C ⟫₀ → ⟪ D ⟫₀) (G : ⟪ C ⟫₀ → ⟪ E ⟫₀) →
                      represents f F → represents g G →
-                     represents ([_,_] coproduct f g) (pair F G)
+                     represents ([_,_] coproduct f g) (⟪⟫-pair F G)
 pair-representable f g F G rF rG =
   begin
     ⟪ [_,_] coproduct f g ⟫₁ ∘ η _
@@ -121,7 +112,7 @@ pair-representable f g F G rF rG =
   ≈⟨ refl⟩∘⟨_ {f = ⟪⟫-×} (λ x → cong₂ _,_ (rF x) (rG x)) ⟩
     ⟪⟫-× ∘ (λ u → F u , G u)
   ≈⟨ (λ _ → ext-≡ (λ {(inj₁ _) → refl; (inj₂ _) → refl})) ⟩
-    pair F G
+    ⟪⟫-pair F G
   ∎
 
 terminal-representable : represents {C = C} !ᶜ (λ _ ())
