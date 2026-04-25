@@ -90,7 +90,7 @@ module AC (mod : IsModule Idᶜ) where
   c = (hom-to-⟪⟫ ∘ʳ T.op) ∘ᵥ cα ∘ᵥ ⟪⟫-to-hom
 
   assoc-aux : ∀ f → η cα _ (η cα _ f) ≡ η cα C f ∘C Tμ.η _
-  assoc-aux f = trans (cong (action ∘C_) Thomo) (trans (cong (_∘C T₁ (T₁ f)) mod-commute) (cong (action ∘C_) (Tμ.commute f)))
+  assoc-aux f = trans (commute cα (T₁ f) action) (trans (cong (_∘C T₁ (T₁ f)) mod-commute) (cong (action ∘C_) (Tμ.commute f)))
 
   identity-aux : ∀ f → f ≡ η cα C f ∘C Tη.η C
   identity-aux f = cong (action ∘C_) (Tη.commute f)
