@@ -1,7 +1,8 @@
 open import Cont
 open import Categories.Monad using (Monad)
+open import Axiom.Extensionality.Propositional using (Extensionality)
 
-module AlgebraRepresentation (M : Monad Cont) where
+module AlgebraRepresentation (ext-≡ : ∀ {a b} → Extensionality a b) (M : Monad Cont) where
 
 open import Data.Unit using (⊤; tt)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong; _≗_)
@@ -14,7 +15,7 @@ open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Category.Construction.EilenbergMoore M using (Module)
 
 open import Composition using (Idᶜ)
-open import Representation M using (represents)
+open import Representation ext-≡ M using (represents)
 
 open import Comodule using (IsComodule)
 

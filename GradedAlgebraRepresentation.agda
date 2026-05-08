@@ -1,8 +1,9 @@
 open import Cont
 open import Categories.Category.Monoidal using (MonoidalCategory; Monoidal)
 open import Categories.Monad.Graded using (GradedMonad)
+open import Axiom.Extensionality.Propositional using (Extensionality)
 
-module GradedAlgebraRepresentation {o ℓ e} {V : MonoidalCategory o ℓ e} (M : GradedMonad V Cont) where
+module GradedAlgebraRepresentation (ext-≡ : ∀ {a b} → Extensionality a b) {o ℓ e} {V : MonoidalCategory o ℓ e} (M : GradedMonad V Cont) where
 
 open import Data.Unit using (⊤; tt)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong; _≗_)
@@ -16,7 +17,7 @@ open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Functor.Monoidal using (IsMonoidalFunctor; MonoidalFunctor)
 
 open import Composition using (Idᶜ)
-open import GradedRepresentation M using (represents)
+open import GradedRepresentation ext-≡ M using (represents)
 open import GradedComodule using (IsGradedComodule)
 
 open Functor using (₀; ₁; homomorphism)
