@@ -12,10 +12,11 @@ module GradedRepresentation
   where
 
 open import ContCocartesian ext-≡ using (_+ᶜ_; !ᶜ; cont-cocartesian;  ⟪⟫-proj₁; ⟪⟫-proj₂; ⟪⟫-pair; ⟪⟫-×)
-open import ContCartesian ext-≡ using (⟨_,_⟩ᶜ)
+open import ContCartesian ext-≡ using (⟨_,_⟩ᶜ; 𝟙ᶜ)
 
+open import Data.Empty using (⊥-elim)
 open import Data.Sum using (inj₁; inj₂)
-open import Data.Product using (_×_; _,_)
+open import Data.Product using (_,_; ∃; proj₁; proj₂)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong; cong₂; _≗_)
 open import Function using (_∘_; id)
 open import Level using (0ℓ)
@@ -30,6 +31,7 @@ open import Categories.Category.Construction.Kleisli using (Kleisli)
 open import Categories.Category.Cocartesian using (Cocartesian)
 open import Categories.Category.Cocartesian using (BinaryCoproducts)
 open import Categories.Object.Coproduct using (Coproduct)
+open import Categories.Object.Initial using (IsInitial)
 
 open Cocartesian cont-cocartesian using (coproducts)
 open BinaryCoproducts coproducts using (coproduct)
@@ -134,3 +136,35 @@ pair-representable {v = v} f g F G rF rG =
 
 terminal-representable : represents {C = C} unit !ᶜ (λ _ ())
 terminal-representable x = ext-≡ (λ ())
+
+
+-- THE EQUIVALENCE RELATION ON KLEISLI MAPS
+
+_≈_ : ∃ (λ v → C ⇒ ₀ (T₀ v) D) → ∃ (λ v' → C ⇒ ₀ (T₀ v') D) → Set
+(v , f) ≈ (v' , g) = ∀ x → ⟪ f ⟫₁ (η (c v) _ x) ≡ ⟪ g ⟫₁ (η (c v') _ x)
+
+≡-to-≈ : {f g : ∃ (λ v → C ⇒ ₀ (T₀ v) D)} → f ≡ g → f ≈ g
+≡-to-≈ refl _ = refl
+
+
+-- CATEGORY OF GRADED REPRESENTABLE FUNCTIONALS
+
+GRFun : Category _ _ _
+GRFun = Category.op record
+  { Obj = Container
+  ; _⇒_ = λ C D → ∃ λ v → C ⇒ ₀ (T₀ v) D
+  ; _≈_ = _≈_
+  ; id = _ , η ε _
+  ; _∘_ = λ {(v , f) (v' , g) → _ , η (⊗-homo.η _) _ ∘C F₁ (T₀ v') f ∘C g}
+  ; equiv = record { refl = λ _ → refl ; sym = λ e x → sym (e x) ; trans = λ e e' x → trans (e x) (e' x) }
+  ; ∘-resp-≈ = λ { {g = _ , g} {_ , i} e e' x → trans (comm _ g x) (trans (e' _) (trans (cong (⟪ i ⟫₁ ∘ η (c _) _) (e _)) (sym (comm _ i x)))) }
+  }
+
+
+-- CHARACTERISATION OF INITIAL OBJECT IN GRFUN
+
+⇐init : IsInitial GRFun C → ∃ λ v → 𝟙ᶜ ⇒ ₀ (T₀ v) C
+⇐init i = IsInitial.! i {𝟙ᶜ}
+
+⇒init : ∃ (λ v → 𝟙ᶜ ⇒ ₀ (T₀ v) C) → IsInitial GRFun C
+⇒init (v , f) = record { ! = _ , _ ⊲ λ _ x → ⊥-elim (_⇒_.pf f _ x) ; !-unique = λ _ x → ⊥-elim (_⇒_.pf f _ (η (c _) _ x _)) }
