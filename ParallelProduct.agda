@@ -11,7 +11,7 @@ open import Categories.Morphism Cont using (_≅_)
 open import Relation.Binary.PropositionalEquality using (refl)
 open import Data.Product using (_×_; _,_; proj₁; proj₂; assocˡ; assocʳ)
 
-open import ContMonoidal using (Idᶜ)
+open import Composition using (Idᶜ)
 open _⇒_
 
 

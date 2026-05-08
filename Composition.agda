@@ -1,4 +1,4 @@
-module ContMonoidal where
+module Composition where
 
 open import Cont
 

@@ -15,7 +15,7 @@ open import Categories.NaturalTransformation using (NaturalTransformation; ntHel
 open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Functor.Monoidal using (IsMonoidalFunctor; MonoidalFunctor)
 
-open import ContMonoidal using (Idᶜ)
+open import Composition using (Idᶜ)
 open import GradedRepresentation M using (represents)
 open import GradedComodule using (IsGradedComodule)
 

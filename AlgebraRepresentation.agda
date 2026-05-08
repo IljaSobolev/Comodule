@@ -13,7 +13,7 @@ open import Categories.NaturalTransformation using (NaturalTransformation; ntHel
 open import Categories.Category.Instance.Sets using (Sets)
 open import Categories.Category.Construction.EilenbergMoore M using (Module)
 
-open import ContMonoidal using (Idᶜ)
+open import Composition using (Idᶜ)
 open import Representation M using (represents)
 
 open import Comodule using (IsComodule)
