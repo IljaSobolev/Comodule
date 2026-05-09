@@ -32,3 +32,8 @@ open import GradedAlgebraRepresentation
 
 open import Tree
 open import FiniteSupport
+
+
+-- ADJUNCTIONS AND GRADED MONADS
+
+open import AdjMonad
